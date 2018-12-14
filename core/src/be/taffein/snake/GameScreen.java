@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
     private long timeSinceLastStep;
     private LinkedList<Vector2> snake;
     private Direction direction = Direction.RIGHT;
+    private Vector2 food;
 
     public GameScreen(Snake game) {
         this.game = game;
@@ -48,6 +50,7 @@ public class GameScreen implements Screen {
         snake.add(new Vector2(1, 0));
         snake.add(new Vector2(0, 0));
         timeSinceLastStep = System.currentTimeMillis();
+        food = new Vector2(MathUtils.random(-19, 19), MathUtils.random(-9, 9));
 
         this.shapeRenderer.setColor(Color.WHITE);
         this.shapeRenderer.setProjectionMatrix(camera.combined);
@@ -71,8 +74,11 @@ public class GameScreen implements Screen {
             shapeRenderer.rect(vector2.x * 22, vector2.y * 22, SNAKE_PART_SIZE, SNAKE_PART_SIZE);
         }
 
+        // draw food
+        shapeRenderer.rect(food.x * 22, food.y * 22, SNAKE_PART_SIZE, SNAKE_PART_SIZE);
+
         // move snake?
-        if (System.currentTimeMillis() - timeSinceLastStep > 400) {
+        if (System.currentTimeMillis() - timeSinceLastStep > 200) {
             moveSnake();
         }
 
@@ -82,7 +88,13 @@ public class GameScreen implements Screen {
     }
 
     private void moveSnake() {
-        Vector2 newHead = snake.removeLast();
+        Vector2 newHead;
+        if (snake.getFirst().equals(food)) {
+            newHead = new Vector2();
+            food = new Vector2(MathUtils.random(-19, 19), MathUtils.random(-9, 9));
+        } else {
+            newHead = snake.removeLast();
+        }
 
         switch (direction) {
             case UP:
