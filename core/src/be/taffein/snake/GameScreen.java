@@ -50,7 +50,7 @@ public class GameScreen implements Screen {
         snake.add(new Vector2(1, 0));
         snake.add(new Vector2(0, 0));
         timeSinceLastStep = System.currentTimeMillis();
-        food = new Vector2(MathUtils.random(-19, 19), MathUtils.random(-9, 9));
+        food = new Vector2(MathUtils.random(-20, 19), MathUtils.random(-10, 9));
 
         this.shapeRenderer.setColor(Color.WHITE);
         this.shapeRenderer.setProjectionMatrix(camera.combined);
@@ -78,7 +78,7 @@ public class GameScreen implements Screen {
         shapeRenderer.rect(food.x * 22, food.y * 22, SNAKE_PART_SIZE, SNAKE_PART_SIZE);
 
         // move snake?
-        if (System.currentTimeMillis() - timeSinceLastStep > 200) {
+        if (System.currentTimeMillis() - timeSinceLastStep > 1000) {
             moveSnake();
         }
 
@@ -91,7 +91,7 @@ public class GameScreen implements Screen {
         Vector2 newHead;
         if (snake.getFirst().equals(food)) {
             newHead = new Vector2();
-            food = new Vector2(MathUtils.random(-19, 19), MathUtils.random(-9, 9));
+            food = new Vector2(MathUtils.random(-20, 19), MathUtils.random(-10, 9));
         } else {
             newHead = snake.removeLast();
         }
@@ -99,37 +99,55 @@ public class GameScreen implements Screen {
         switch (direction) {
             case UP:
                 newHead.x = snake.getFirst().x;
-                newHead.y = snake.getFirst().y + 1;
+                if (snake.getFirst().y == 9) {
+                    newHead.y = -10;
+                } else {
+                    newHead.y = snake.getFirst().y + 1;
+                }
                 break;
             case DOWN:
                 newHead.x = snake.getFirst().x;
-                newHead.y = snake.getFirst().y - 1;
+                if (snake.getFirst().y == -10) {
+                    newHead.y = 9;
+                } else {
+                    newHead.y = snake.getFirst().y - 1;
+                }
                 break;
             case LEFT:
-                newHead.x = snake.getFirst().x - 1;
+                if (snake.getFirst().x == -20) {
+                    newHead.x = 19;
+                } else {
+                    newHead.x = snake.getFirst().x - 1;
+                }
                 newHead.y = snake.getFirst().y;
                 break;
             case RIGHT:
-                newHead.x = snake.getFirst().x + 1;
+                if (snake.getFirst().x == 19) {
+                    newHead.x = -20;
+                } else {
+                    newHead.x = snake.getFirst().x + 1;
+                }
                 newHead.y = snake.getFirst().y;
                 break;
         }
 
         snake.addFirst(newHead);
         timeSinceLastStep = System.currentTimeMillis();
+
+        System.out.println(snake.getFirst());
     }
 
     private void readInput() {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && direction != Direction.DOWN) {
             direction = Direction.UP;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && direction != Direction.UP) {
             direction = Direction.DOWN;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && direction != Direction.RIGHT) {
             direction = Direction.LEFT;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && direction != Direction.LEFT) {
             direction = Direction.RIGHT;
         }
     }
