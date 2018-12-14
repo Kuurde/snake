@@ -78,7 +78,7 @@ public class GameScreen implements Screen {
         shapeRenderer.rect(food.x * 22, food.y * 22, SNAKE_PART_SIZE, SNAKE_PART_SIZE);
 
         // move snake?
-        if (System.currentTimeMillis() - timeSinceLastStep > 1000) {
+        if (System.currentTimeMillis() - timeSinceLastStep > 200) {
             moveSnake();
         }
 
@@ -133,8 +133,6 @@ public class GameScreen implements Screen {
 
         snake.addFirst(newHead);
         timeSinceLastStep = System.currentTimeMillis();
-
-        System.out.println(snake.getFirst());
     }
 
     private void readInput() {
